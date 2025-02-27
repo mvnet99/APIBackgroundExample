@@ -60,7 +60,7 @@ Each project has its own configuration in `appsettings.json`. The most important
 },
 "Jwt": {
   "Key": "YourSuperSecretKey123!@#$%^&*()_ThisIsALongerKeyToMeetTheRequirement",
-  "Issuer": "api1-frontend",
+  "Issuer": "FrontEndAPI",
   "Audience": "api-clients"
 }
 ```
