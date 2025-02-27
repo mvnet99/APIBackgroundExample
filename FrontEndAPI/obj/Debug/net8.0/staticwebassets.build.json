@@ -1,0 +1,39 @@
+{
+  "Version": 1,
+  "Hash": "Jk7rvKZhEVhb6e4RzYk5crFhV6NmeFb6SMhspptOZ04=",
+  "Source": "FrontEndAPI",
+  "BasePath": "_content/FrontEndAPI",
+  "Mode": "Default",
+  "ManifestType": "Build",
+  "ReferencedProjectsConfiguration": [],
+  "DiscoveryPatterns": [
+    {
+      "Name": "FrontEndAPI\\wwwroot",
+      "Source": "FrontEndAPI",
+      "ContentRoot": "C:\\Latest_Q\\APISampleGroup\\FrontEndAPI\\wwwroot\\",
+      "BasePath": "_content/FrontEndAPI",
+      "Pattern": "**"
+    }
+  ],
+  "Assets": [
+    {
+      "Identity": "C:\\Latest_Q\\APISampleGroup\\FrontEndAPI\\wwwroot\\Index.html",
+      "SourceId": "FrontEndAPI",
+      "SourceType": "Discovered",
+      "ContentRoot": "C:\\Latest_Q\\APISampleGroup\\FrontEndAPI\\wwwroot\\",
+      "BasePath": "_content/FrontEndAPI",
+      "RelativePath": "Index.html",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "AssetMergeBehavior": "PreferTarget",
+      "AssetMergeSource": "",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\Index.html"
+    }
+  ]
+}

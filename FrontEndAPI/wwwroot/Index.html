@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebAPI Async Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        pre {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+        }
+        .loading {
+            display: none;
+            margin-top: 20px;
+        }
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #09f;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        #loginContainer {
+            margin-bottom: 20px;
+        }
+        #apiContainer {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>WebAPI Async Example</h1>
+    
+    <div id="loginContainer" class="card">
+        <h2>Login</h2>
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" id="username" value="admin">
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="password" id="password" value="admin123">
+        </div>
+        <button id="loginButton">Login</button>
+        <div id="loginMessage"></div>
+    </div>
+    
+    <div id="apiContainer" class="container">
+        <div class="card">
+            <h2>Current User</h2>
+            <p id="currentUser">Not logged in</p>
+            <button id="logoutButton">Logout</button>
+        </div>
+        
+        <div class="card">
+            <h2>GET Request</h2>
+            <p>Fetch data from both back-end APIs asynchronously</p>
+            <button id="fetchButton">Fetch Data</button>
+            <div id="getLoading" class="loading">
+                <p>Fetching data from both APIs asynchronously...</p>
+                <div class="spinner"></div>
+            </div>
+            <h3>Response:</h3>
+            <pre id="getResponse">No data yet. Click "Fetch Data" to start.</pre>
+        </div>
+        
+        <div class="card">
+            <h2>POST Request</h2>
+            <p>Send data to both back-end APIs asynchronously</p>
+            
+            <div class="form-group">
+                <label for="clientInfo">Client Info:</label>
+                <input type="text" id="clientInfo" value="Web Browser Client">
+            </div>
+            
+            <div class="form-group">
+                <label for="payload">Payload (JSON):</label>
+                <textarea id="payload" rows="5">{"name": "Test User", "action": "Sample Request", "timestamp": "2023-01-01T12:00:00Z"}</textarea>
+            </div>
+            
+            <button id="submitButton">Submit Data</button>
+            
+            <div id="postLoading" class="loading">
+                <p>Sending data to both APIs asynchronously...</p>
+                <div class="spinner"></div>
+            </div>
+            
+            <h3>Response:</h3>
+            <pre id="postResponse">No data submitted yet. Fill the form and click "Submit Data".</pre>
+        </div>
+    </div>
+    
+    <script>
+        // DOM Elements
+        const loginButton = document.getElementById('loginButton');
+        const logoutButton = document.getElementById('logoutButton');
+        const loginContainer = document.getElementById('loginContainer');
+        const apiContainer = document.getElementById('apiContainer');
+        const fetchButton = document.getElementById('fetchButton');
+        const submitButton = document.getElementById('submitButton');
+        const getResponse = document.getElementById('getResponse');
+        const postResponse = document.getElementById('postResponse');
+        const getLoading = document.getElementById('getLoading');
+        const postLoading = document.getElementById('postLoading');
+        const clientInfoInput = document.getElementById('clientInfo');
+        const payloadInput = document.getElementById('payload');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginMessage = document.getElementById('loginMessage');
+        const currentUser = document.getElementById('currentUser');
+        
+        // API URL
+        const apiUrl = '/api/aggregate';
+        const authUrl = '/api/auth/login';
+        
+        // JWT Token
+        let jwtToken = localStorage.getItem('jwtToken');
+        
+        // Check if already logged in
+        if (jwtToken) {
+            showApiContainer();
+            currentUser.textContent = 'Logged in with token: ' + jwtToken.substring(0, 20) + '...';
+        }
+        
+        // Login Handler
+        loginButton.addEventListener('click', async () => {
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+            
+            try {
+                const response = await fetch(authUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    jwtToken = data.token;
+                    localStorage.setItem('jwtToken', jwtToken);
+                    loginMessage.textContent = 'Login successful!';
+                    loginMessage.style.color = 'green';
+                    showApiContainer();
+                    currentUser.textContent = 'Logged in as: ' + username;
+                } else {
+                    loginMessage.textContent = 'Login failed. Please check your credentials.';
+                    loginMessage.style.color = 'red';
+                }
+            } catch (error) {
+                loginMessage.textContent = `Error: ${error.message}`;
+                loginMessage.style.color = 'red';
+            }
+        });
+        
+        // Logout Handler
+        logoutButton.addEventListener('click', () => {
+            localStorage.removeItem('jwtToken');
+            jwtToken = null;
+            hideApiContainer();
+            loginMessage.textContent = '';
+        });
+        
+        // GET Request
+        fetchButton.addEventListener('click', async () => {
+            if (!jwtToken) {
+                getResponse.textContent = 'Please login first!';
+                return;
+            }
+            
+            try {
+                getResponse.textContent = 'Fetching...';
+                getLoading.style.display = 'block';
+                fetchButton.disabled = true;
+                
+                const response = await fetch(apiUrl, {
+                    headers: {
+                        'Authorization': `Bearer ${jwtToken}`
+                    }
+                });
+                
+                if (response.status === 401) {
+                    getResponse.textContent = 'Unauthorized. Please login again.';
+                    localStorage.removeItem('jwtToken');
+                    hideApiContainer();
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                // Format and display the response
+                getResponse.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                getResponse.textContent = `Error: ${error.message}`;
+            } finally {
+                getLoading.style.display = 'none';
+                fetchButton.disabled = false;
+            }
+        });
+        
+        // POST Request
+        submitButton.addEventListener('click', async () => {
+            if (!jwtToken) {
+                postResponse.textContent = 'Please login first!';
+                return;
+            }
+            
+            try {
+                let payload;
+                try {
+                    payload = JSON.parse(payloadInput.value);
+                } catch (e) {
+                    postResponse.textContent = `Invalid JSON in payload: ${e.message}`;
+                    return;
+                }
+                
+                const requestData = {
+                    clientInfo: clientInfoInput.value,
+                    payload: payload
+                };
+                
+                postResponse.textContent = 'Submitting...';
+                postLoading.style.display = 'block';
+                submitButton.disabled = true;
+                
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${jwtToken}`
+                    },
+                    body: JSON.stringify(requestData)
+                });
+                
+                if (response.status === 401) {
+                    postResponse.textContent = 'Unauthorized. Please login again.';
+                    localStorage.removeItem('jwtToken');
+                    hideApiContainer();
+                    return;
+                }
+                
+                const data = await response.json();
+                
+                // Format and display the response
+                postResponse.textContent = JSON.stringify(data, null, 2);
+            } catch (error) {
+                postResponse.textContent = `Error: ${error.message}`;
+            } finally {
+                postLoading.style.display = 'none';
+                submitButton.disabled = false;
+            }
+        });
+        
+        // Helper Functions
+        function showApiContainer() {
+            loginContainer.style.display = 'none';
+            apiContainer.style.display = 'block';
+        }
+        
+        function hideApiContainer() {
+            loginContainer.style.display = 'block';
+            apiContainer.style.display = 'none';
+        }
+    </script>
+</body>
+</html>

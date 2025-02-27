@@ -1,0 +1,25 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Latest_Q\\APISampleGroup\\FrontEndAPI\\wwwroot\\Index.html",
+      "PackagePath": "staticwebassets\\Index.html"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.FrontEndAPI.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.FrontEndAPI.props",
+      "PackagePath": "build\\FrontEndAPI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.FrontEndAPI.props",
+      "PackagePath": "buildMultiTargeting\\FrontEndAPI.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.FrontEndAPI.props",
+      "PackagePath": "buildTransitive\\FrontEndAPI.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
