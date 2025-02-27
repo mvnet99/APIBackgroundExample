@@ -5,8 +5,7 @@
 This project demonstrates a three-tier WebAPI architecture with asynchronous communication between APIs. It consists of one front-end API that orchestrates calls to two back-end APIs, simulating a microservices architecture.
 
 ## Architecture Overview
-
-
+![Architecture Diagram](Diagrams/Architecture.png)
 
 ### Components:
 
@@ -86,7 +85,7 @@ Each project has its own configuration in `appsettings.json`. The most important
 
 ### Flow Diagram
 
-![Flow Diagram](flow-diagram.png)
+![Flow Diagram](Diagrams/Sequence1.png)
 
 ### Asynchronous Communication
 
